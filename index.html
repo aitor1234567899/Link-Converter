@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -364,9 +363,10 @@
         font-size:14px;
     }
 
-    .platform-title img{
-        width:20px; height:20px;
-        border-radius:5px;
+    .platform-logo{
+        width:22px; 
+        height:22px;
+        border-radius:6px;
         object-fit:cover;
         background: var(--surface-2);
         box-shadow: 0 0 0 2px var(--bg-1), 0 0 0 3px color-mix(in srgb, var(--accent) 60%, transparent);
@@ -379,15 +379,16 @@
     }
 
     .logo-fallback{
-        width:20px; height:20px;
-        border-radius:5px;
+        width:22px; 
+        height:22px;
+        border-radius:6px;
         display:inline-flex;
         align-items:center;
         justify-content:center;
         font-family:'JetBrains Mono', monospace;
         font-weight:700;
         font-size:11px;
-        color: var(--bg-0);
+        color: #ffffff;
         background: var(--accent);
         box-shadow: 0 0 0 2px var(--bg-1), 0 0 0 3px color-mix(in srgb, var(--accent) 60%, transparent);
         animation: halo 2.4s ease-in-out infinite;
@@ -607,6 +608,14 @@
         setTimeout(() => ripple.remove(), 600);
     }
 
+    function handleLogoError(imgElement, initial) {
+        const parent = imgElement.parentElement;
+        const fallback = document.createElement('span');
+        fallback.className = 'logo-fallback';
+        fallback.innerText = initial;
+        parent.replaceChild(fallback, imgElement);
+    }
+
     function convert() {
         const output = document.getElementById("output");
         const urlInput = document.getElementById("link").value.trim();
@@ -627,17 +636,17 @@
         const platforms = {
             Hipobuy: {
                 link: `https://hipobuy.com/product/weidian/${id}`,
-                logo: `https://www.google.com/s2/favicons?domain=hipobuy.com&sz=64`,
+                logo: `https://www.google.com/s2/favicons?domain=hipobuy.com&sz=128`,
                 accent: '#38bdf8'
             },
             USFans: {
                 link: `https://www.usfans.com/product/3/${id}`,
-                logo: `https://www.google.com/s2/favicons?domain=usfans.com&sz=64`,
+                logo: `https://www.google.com/s2/favicons?domain=usfans.com&sz=128`,
                 accent: '#fb923c'
             },
             Weidian: {
                 link: `https://weidian.com/item.html?itemID=${id}`,
-                logo: `https://www.google.com/s2/favicons?domain=weidian.com&sz=64`,
+                logo: `https://www.google.com/s2/favicons?domain=weidian.com&sz=128`,
                 accent: '#fb7185'
             }
         };
@@ -646,12 +655,18 @@
         html += '<div class="result-container">';
 
         for (const [name, data] of Object.entries(platforms)) {
+            const initial = name.charAt(0);
             html += `
                 <div class="card" style="--accent:${data.accent}">
                     <div class="card-body">
                         <div class="card-header">
                             <div class="platform-title">
-                                <span class="logo-fallback">${name.charAt(0)}</span>
+                                <img 
+                                    src="${data.logo}" 
+                                    alt="${name}" 
+                                    class="platform-logo"
+                                    onerror="handleLogoError(this, '${initial}')"
+                                >
                                 <span>${name}</span>
                             </div>
                             <button class="btn-copy" onclick="copyToClipboard('${data.link}', this)">Copiar</button>
